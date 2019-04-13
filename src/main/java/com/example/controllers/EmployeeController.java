@@ -3,12 +3,9 @@ package com.example.controllers;
 import com.example.model.Employee;
 import com.example.repository.IEmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,19 +13,23 @@ import java.util.Map;
 @RequestMapping("/employee")
 public class EmployeeController {
 
-    @Autowired
+
     IEmployeeRepository employeeRepository;
+    @Autowired
+    EmployeeController(IEmployeeRepository repository){
+        this.employeeRepository =repository;
+    }
 
 
     @PostMapping("/addEmployee")
     // @RequestMapping(value = "/addEmployee",method = RequestMethod.POST,produces = "application/json")
-    public Map<String, String> addEmployee(Employee employee) {
+    public Map<String, String> addEmployee(@Valid @RequestBody Employee employee) {
         Map<String, String> responseObject = new HashMap<>();
-        int result = 0;
+        Employee  result=null ;
         try {
-            result = employeeRepository.addEmployee(employee);
+            result = employeeRepository.saveAndFlush(employee);
         } finally {
-            if (result == 0) {
+            if (result == null) {
                 responseObject.put("status", "failed");
             } else {
                 responseObject.put("status", "success");
@@ -39,9 +40,14 @@ public class EmployeeController {
 
     }
 
-    @GetMapping("/getEmployee")
-    public Employee getEmployee(){
 
-        return new Employee(123l,"prakash","baner",23312.12);
+
+    @GetMapping("/getEmployee/{key}")
+
+    public Employee getEmployee(@PathVariable Long key){
+
+        //return employeeRepository.getEmployee(key);
+
+        return employeeRepository.getOne(key);
     }
 }

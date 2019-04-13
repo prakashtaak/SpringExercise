@@ -1,15 +1,16 @@
 package com.example.repository;
 
 import com.example.model.Employee;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
+@Repository
+public interface IEmployeeRepository extends JpaRepository<Employee,Long> {
 
-public interface IEmployeeRepository {
-
-    public int addEmployee(Employee employee);
+  /*  public int3 addEmployee(Employee employee);
 
     public Employee getEmployee(long id);
 
-    public List<Employee> getAllEmployees();
+    public List<Employee> getAllEmployees();*/
 
 }

@@ -1,38 +1,40 @@
 package com.example.repositioryImpl;
 
 import com.example.model.Employee;
-import com.example.repository.IEmployeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
-public class EmployeeRepositoryImpl implements IEmployeeRepository {
-
-
-    static Map<Long, Employee> employees = new HashMap<>();
+public class EmployeeRepositoryImpl {
 
 
-    @Override
+    //static Map<Long, Employee> employees = new HashMap<>();
+    @Autowired
+    EntityManager entityManager;
+
+
     public int addEmployee(Employee employee) {
         if (employee == null)
             throw new RuntimeException("exception while adding employee | found empty object");
-
-        employees.computeIfAbsent(employee.getId(), (key) -> employee);
-
+        entityManager.persist(employee);
+        //Employee employee1 = employees.computeIfAbsent(employee.getId(), (key) -> employee);
         return 1;
     }
 
-    @Override
+
     public Employee getEmployee(long id) {
-        Employee emp = employees.get(id);
+       Query getQuery = entityManager.createQuery("select * from Employee where id=:id");
+        Employee emp = (Employee)getQuery.getSingleResult();
+
         if (emp == null)
             throw new RuntimeException("Cannot find given employee");
         return emp;
     }
 
-    @Override
-    public List<Employee> getAllEmployees() {
-        if (employees.size() < 0)
-            throw new RuntimeException("No employee in DB");
-        return (List) employees.values();
-    }
+
+   /* public List<Employee> getAllEmployees() {
+
+        return (List) entityManager.();
+    }*/
 }
